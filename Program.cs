@@ -15,6 +15,11 @@ namespace MQTT
     3：在命令行中输入  emqx.cmd start/stop
     4：在浏览器中 http://localhost:18083
     5: 默认账号密码 admin/1qazxsw2!@ 
+
+    6：https://mqttx.app/zh/downloads MQTTX 下载
+    7：MQTTX 连接 emqx
+
+
      */
 
 
