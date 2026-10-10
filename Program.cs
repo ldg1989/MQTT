@@ -45,7 +45,8 @@ namespace MQTT
                 .WithWillTopic(TopicDeviceData)              // 遗言消息：客户端异常断开时由 Broker 代发
                 .WithWillPayload("设备异常离线")              // MQTTnet 4.x 没有 WithWillMessage，需拆成 Topic/Payload/QoS
                 .WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
-                .WithWillRetain(false)
+                .WithWillRetain(false)// 遗言消息是否持久化
+                .WithWillDelayInterval(10)// 遗言消息延迟10秒发送
                 .Build();
 
             var managedOptions = new ManagedMqttClientOptionsBuilder()
