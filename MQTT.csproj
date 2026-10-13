@@ -5,10 +5,22 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>MQTT</RootNamespace>
   </PropertyGroup>
 
+  <!--
+    直接引用 MQTTnet，不再经由 WebJobs.Extensions.MQTT.OutputBinding。
+    原因：该包是 Azure Functions 专用绑定扩展，会传递引入 45 个本项目从未引用的程序集
+         （Microsoft.Azure.WebJobs 3.0.37、Newtonsoft.Json、18 个 Microsoft.Extensions 2.1.x 等），
+         并把 MQTTnet 锁死在 4.2.1。
+
+    版本说明：选 4.3.7.1207 而非 5.x，因为 MQTTnet v5 已移除 ManagedClient 扩展
+    （官方 breaking change，暂不计划恢复），而本项目依赖其自动重连 / 心跳 / 断线恢复能力。
+    4.3.7.1207 是 MQTTnet.Extensions.ManagedClient 的最后一个版本。
+  -->
   <ItemGroup>
-    <PackageReference Include="WebJobs.Extensions.MQTT.OutputBinding" Version="1.0.4" />
+    <PackageReference Include="MQTTnet" Version="4.3.7.1207" />
+    <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.3.7.1207" />
   </ItemGroup>
 
 </Project>

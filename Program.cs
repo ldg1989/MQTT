@@ -1,6 +1,7 @@
 ﻿using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
+using MQTTnet.Formatter;
 using MQTTnet.Protocol;
 
 namespace MQTT
@@ -41,12 +42,13 @@ namespace MQTT
             var mqttClientOptions = new MqttClientOptionsBuilder()
                 .WithTcpServer(BrokerIp, BrokerPort)
                 .WithClientId($"Client_{Guid.NewGuid():N}") // 唯一客户端ID
+                .WithProtocolVersion(MqttProtocolVersion.V500) // MQTTnet 4.x 默认 V311，而 WillDelayInterval 是 MQTT 5.0.0 特性，不声明会抛 NotSupportedException
                 .WithCleanSession()
                 .WithWillTopic(TopicDeviceData)              // 遗言消息：客户端异常断开时由 Broker 代发
                 .WithWillPayload("设备异常离线")              // MQTTnet 4.x 没有 WithWillMessage，需拆成 Topic/Payload/QoS
                 .WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
-                .WithWillRetain(false)// 遗言消息是否持久化
-                .WithWillDelayInterval(10)// 遗言消息延迟10秒发送
+                .WithWillRetain(false)                      // 遗言消息是否持久化
+                .WithWillDelayInterval(10)                  // 遗言消息延迟10秒发送（MQTT 5.0.0 特性，需配合上面的 V500）
                 .Build();
 
             var managedOptions = new ManagedMqttClientOptionsBuilder()
@@ -94,7 +96,7 @@ namespace MQTT
             Console.WriteLine("\n输入指令下发给下位机，exit退出程序：");
             while (true)
             {
-                string input = Console.ReadLine();
+                string? input = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(input))
                     continue;
                 if (input.Equals("exit", StringComparison.OrdinalIgnoreCase))
